@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Design tokens
+   Palette verified against WCAG AA (see build notes). Institutional
+   navy/graphite system deliberately avoids the generic bright-SaaS-blue
+   default — restrained, data-dense, built for numbers first.
+   ============================================================ */
+:root {
+  /* Surfaces */
+  --color-bg: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #eef0f3;
+
+  /* Borders */
+  --color-border: #e2e5ea;
+  --color-border-strong: #c9ced6;
+
+  /* Text */
+  --color-ink: #12151c;
+  --color-ink-muted: #525a67;
+  --color-ink-faint: #6b7280;
+  --color-ink-inverse: #f6f7f9;
+
+  /* Brand / interactive */
+  --color-primary: #1b3a6b;
+  --color-primary-hover: #142c52;
+  --color-primary-soft: #e7edf6;
+  --color-accent: #b5762a;
+  --color-accent-soft: #f5ebdd;
+
+  /* Semantic (financial) */
+  --color-positive: #0b7a56;
+  --color-positive-soft: #e4f3ec;
+  --color-negative: #b23434;
+  --color-negative-soft: #fbe9e9;
+
+  /* Focus ring */
+  --color-focus: #1b3a6b;
+
+  /* Motion — restrained, functional, never decorative (apple-design / emil-design-eng) */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 120ms;
+  --duration-base: 180ms;
+  --duration-slow: 320ms;
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-sunken: var(--color-surface-sunken);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+  --color-ink: var(--color-ink);
+  --color-ink-muted: var(--color-ink-muted);
+  --color-ink-faint: var(--color-ink-faint);
+  --color-ink-inverse: var(--color-ink-inverse);
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-primary-soft: var(--color-primary-soft);
+  --color-accent: var(--color-accent);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-positive: var(--color-positive);
+  --color-positive-soft: var(--color-positive-soft);
+  --color-negative: var(--color-negative);
+  --color-negative-soft: var(--color-negative-soft);
+
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+/* Tabular figures everywhere numbers are compared in a column — this is
+   the single detail that makes a data table feel engineered rather than
+   templated (ui-ux-pro-max chart guidance + emil-design-eng). */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+::selection {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Dropdown/popover entrance — used by TickerSearch results, the account
+   menu, and the compare-page ticker picker. Pair with an origin-* utility
+   (origin-top / origin-top-right) at the call site so it grows from the
+   edge nearest its trigger rather than its own center. */
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.animate-dropdown-in {
+  animation: dropdown-in var(--duration-fast) var(--ease-out) both;
+}
+
+/* Respect the user's motion preference: keep color/opacity transitions
+   (they don't trigger vestibular discomfort and losing them makes state
+   changes harder to follow), but remove movement entirely. Every
+   `transform` in this app is animation-only — press feedback, hover
+   nudges, dropdown entrances — never static layout, so zeroing it here
+   is safe. Looping keyframe animations (skeleton pulse, spinners) get
+   cut down to a single frame rather than looping indefinitely. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+  * {
+    transform: none !important;
+  }
+}
+
+/* Custom scrollbar - subtle, not the default chunky browser bar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 999px;
+  border: 2px solid var(--color-bg);
+}

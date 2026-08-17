@@ -1,0 +1,32 @@
+# --- Environment / secrets ---
+.env
+.env.local
+*.env
+!.env.example
+
+# --- Python (backend) ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Node / Next.js (frontend) ---
+node_modules/
+.next/
+out/
+npm-debug.log*
+.turbo/
+
+# --- OS / editor ---
+.DS_Store
+.vscode/
+.idea/
+
+# --- Docker ---
+*.pid

@@ -1,0 +1,42 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      # Overrides whatever's in .env — points SQLite at the mounted volume
+      # below so data survives `docker compose down`/`up`. Local (non-Docker)
+      # dev keeps using the simpler default in .env.example.
+      DATABASE_URL: sqlite+aiosqlite:////app/data/stock_platform.db
+    volumes:
+      - backend_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Baked into the client JS bundle at build time — must be a URL
+        # the user's browser can reach (the published host port).
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    environment:
+      # Read at runtime, server-side only. Lets server components (SSR)
+      # reach the backend over the Compose network by service name,
+      # instead of "localhost" (which inside this container means itself).
+      BACKEND_INTERNAL_URL: http://backend:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  backend_data:
